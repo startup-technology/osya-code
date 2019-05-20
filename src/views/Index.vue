@@ -8,15 +8,19 @@
     </form>
     <table>
       <thead>
+        <th>id</th>
         <th>なまへ</th>
         <th>Github URL</th>
         <th>Comment</th>
+        <th></th>
       </thead>
       <tbody>
-        <tr  v-for="osyaco in osyacos" :key="osyaco.id">
+        <tr  v-for="(osyaco, index) in osyacos" :key="osyaco.id">
+          <td>{{index}}</td>
           <td>{{osyaco.name}}</td>
           <td>{{osyaco.giturl}}</td>
           <td>{{osyaco.comment}}</td>
+          <td v-on:click="deleteOsyaco(osyaco.id, index)">[削除]</td>
         </tr>
       </tbody>
     </table>
@@ -31,6 +35,7 @@ export default {
   data() {
     return {
       osyacos: [],
+      id: '',
       name: '',
       giturl: '',
       comment: ''
@@ -42,8 +47,12 @@ export default {
       .then(response => (this.osyacos = response.data))
   },
   methods: {
+    deleteOsyaco(id, index) {
+      axios
+        .delete('https://vizzduwbk3.execute-api.ap-northeast-1.amazonaws.com/dev/todos/' + id)
+        .then(() => this.osyacos.splice(index, 1))
+    },
     addOsyaco() {
-      console.log('test');
       axios
         .post('https://vizzduwbk3.execute-api.ap-northeast-1.amazonaws.com/dev/todos',
           {
