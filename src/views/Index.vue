@@ -4,15 +4,18 @@
       <label>name<input v-model="name"></label>
       <label>github url<input id="giturl" v-model="giturl"></label>
       <label>comment<input id="comment" v-model="comment"></label>
-      <button type="submit">そうしん</button>
+      <b-button variant="outline-primary" type="submit">そうしん</b-button>
     </form>
+    <div v-if="message">{{message}}</div>
     <table>
       <thead>
-        <th>id</th>
-        <th>なまへ</th>
-        <th>Github URL</th>
-        <th>Comment</th>
-        <th></th>
+        <tr>
+          <th>id</th>
+          <th>なまへ</th>
+          <th>Github URL</th>
+          <th>Comment</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
         <tr  v-for="(osyaco, index) in osyacos" :key="osyaco.id">
@@ -20,7 +23,7 @@
           <td>{{osyaco.name}}</td>
           <td>{{osyaco.giturl}}</td>
           <td>{{osyaco.comment}}</td>
-          <td v-on:click="deleteOsyaco(osyaco.id, index)">[削除]</td>
+          <td v-on:click="deleteOsyaco(osyaco.id, index)"><b-button variant="outline-danger">[削除]</b-button></td>
         </tr>
       </tbody>
     </table>
@@ -29,7 +32,6 @@
 
 <script>
 import axios from 'axios'
-
 export default {
   name: "Index",
   data() {
@@ -38,7 +40,8 @@ export default {
       id: '',
       name: '',
       giturl: '',
-      comment: ''
+      comment: '',
+      message: ''
       };
   },
   mounted () {
@@ -53,6 +56,13 @@ export default {
         .then(() => this.osyacos.splice(index, 1))
     },
     addOsyaco() {
+      if (this.name === '' || this.giturl === '' || this.comment === '') {
+        this.message = '名前とGitHubURLとコメントは必須です！';
+        console.log('dame');
+        return;
+      } else {
+        this.message = '';
+      }
       axios
         .post('https://vizzduwbk3.execute-api.ap-northeast-1.amazonaws.com/dev/todos',
           {
